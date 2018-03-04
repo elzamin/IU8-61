@@ -1,0 +1,110 @@
+#include <iostream>
+#include <cmath>
+#define n 0.3			//норма обучения
+using namespace std;
+
+class Net
+{
+private:
+	double w[5];
+	int bad;
+
+	bool y(double x)
+	{
+		return x >= 0.5 ? 1 : 0;
+	}
+
+	double f(double x)
+	{
+		return 1/(1+exp(-x));
+	}
+
+	double net_(bool x1, bool x2, bool x3, bool x4, double w0, double w1, double w2, double w3, double w4)
+	{
+		return (1 * w0 + x1 * w1 + x2 * w2 + x3 * w3 + x4 * w4);
+	}
+
+	bool target(bool x1, bool x2, bool x3, bool x4)
+	{
+		return !((!x1 || x2) && !x3 || x4);
+	}
+
+	void cycle(bool x1, bool x2, bool x3, bool x4)
+	{
+		int delta;
+		double net = net_(x1, x2, x3, x4, w[0], w[1], w[2], w[3], w[4]);
+		bool a = y(f(net));
+		cout << " " << a;
+		bool b = target(x1, x2, x3, x4);
+		delta = b - a;
+		if (a != b)
+			bad++;
+		double deltaw0 = n * delta * f(net) * (1 - f(net));
+		double deltaw1 = n * delta * f(net) * (1 - f(net)) * (int)x1;
+		double deltaw2 = n * delta * f(net) * (1 - f(net)) * (int)x2;
+		double deltaw3 = n * delta * f(net) * (1 - f(net)) * (int)x3;
+		double deltaw4 = n * delta * f(net) * (1 - f(net)) * (int)x4;
+		w[0] += deltaw0;
+		w[1] += deltaw1;
+		w[2] += deltaw2;
+		w[3] += deltaw3;
+		w[4] += deltaw4;
+	}
+
+	void start()
+	{
+		bad = 0;
+		cout << "Y  = (";
+		//cycle(false, false, false, false);
+		//cycle(false, false, false, true);
+		//cycle(false, false, true, false);
+		//cycle(false, false, true, true);
+		cycle(false, true, false, false);
+		cycle(false, true, false, true);
+		cycle(false, true, true, false);
+		cycle(false, true, true, true);
+		cycle(true, false, false, false);
+		cycle(true, false, false, true);
+		cycle(true, false, true, false);
+		cycle(true, false, true, true);
+		cycle(true, true, false, false);
+		cycle(true, true, false, true);
+		cycle(true, true, true, false);
+		cycle(true, true, true, true);
+		cout << ")\nW  = (" << w[0];
+		cout << ", " << w[1];
+		cout << ", " << w[2];
+		cout << ", " << w[3];
+		cout << ", " << w[4];
+		cout << "), E = " << bad << endl << endl;
+	}
+public:
+	Net(double x0, double x1, double x2, double x3, double x4)
+	{
+		int i = 0;
+		w[0] = x0;
+		w[1] = x1;
+		w[2] = x2;
+		w[3] = x3;
+		w[4] = x4;
+		//for(int i = 0; i <300 ; i++)
+		do
+		{
+			i++;
+			cout << "Generation # " << i << endl;;
+			start();
+			cout << "--------------------------------------\n";
+		} while (bad != 0);
+		cout << "Required generations to learn = " << i - 1 << endl;
+	}
+
+	~Net() {}
+};
+
+int main()
+{
+	Net * A = new Net(0, 0, 0, 0, 0);
+	cout << "by Usubaliev Elzamin IU8-51\n";
+	system("pause");
+	return 0;
+}

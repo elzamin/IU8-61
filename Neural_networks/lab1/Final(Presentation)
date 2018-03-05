@@ -55,10 +55,10 @@ private:
 	{
 		bad = 0;
 		cout << "Y  = (";
-		//cycle(false, false, false, false);
-		//cycle(false, false, false, true);
-		//cycle(false, false, true, false);
-		//cycle(false, false, true, true);
+		cycle(false, false, false, false);
+		cycle(false, false, false, true);
+		cycle(false, false, true, false);
+		cycle(false, false, true, true);
 		cycle(false, true, false, false);
 		cycle(false, true, false, true);
 		cycle(false, true, true, false);
